@@ -34,7 +34,14 @@ jobs:
         run: pnpm install
       - name: Build
         run: pnpm build
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          
       - name: Publish Package to GitHub Package Registry
         run: pnpm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ steps.generate-token.outputs.token }}
